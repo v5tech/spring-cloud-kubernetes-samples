@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: service-config-sample
+  labels:
+    # spring-cloud-kubernetes-configuration-watcher 监听 label
+    spring.cloud.kubernetes.config: "true"
+data:
+  application.yml: |-
+    spring:
+      cloud:
+        config:
+          profile: kubernetes
+    ---
+    spring:
+      config:
+        activate:
+          on-profile: default
+    greeting:
+      message: HelloWorld! --- from ConfigMap default profile 111
+    ---
+    spring:
+      config:
+        activate:
+          on-profile: local
+    greeting:
+      message: HelloWorld! --- from ConfigMap local profile 222
+    ---
+    spring:
+      config:
+        activate:
+          on-profile: dev
+    greeting:
+      message: HelloWorld! --- from ConfigMap dev profile 333
+    ---
+    spring:
+      config:
+        activate:
+          on-profile: kubernetes
+    greeting:
+      message: HelloWorld! --- from ConfigMap kubernetes profile 444
