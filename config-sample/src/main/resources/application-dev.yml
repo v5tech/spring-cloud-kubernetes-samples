@@ -1,0 +1,12 @@
+# configmap中获取不到值时才会加载此配置
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+greeting:
+  message: HelloWorld! --- from application-dev.yml dev
+
+secret:
+  username: dev
+  password: 111111

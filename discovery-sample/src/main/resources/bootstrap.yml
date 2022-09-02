@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: discovery-sample
+  cloud:
+    kubernetes:
+      client:
+        # 该参数务必配置，否则在获取ServiceInstance时会报错
+        namespace: default
+      discovery:
+        enabled: true
+        all-namespaces: false
+        include-not-ready-addresses: true
+      config:
+        name: ${spring.application.name}
+        namespace: default
+      secrets:
+        name: ${spring.application.name}
+        namespace: default
+server:
+  port: 9080

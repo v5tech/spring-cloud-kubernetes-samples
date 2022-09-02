@@ -1,0 +1,12 @@
+# configmap中获取不到值时才会加载此配置
+spring:
+  config:
+    activate:
+      on-profile: kubernetes
+
+greeting:
+  message: HelloWorld! --- from application-kubernetes.yml
+
+secret:
+  username: kubernetes
+  password: 222222

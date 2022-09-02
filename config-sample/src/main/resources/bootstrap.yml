@@ -1,0 +1,128 @@
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.cloud.kubernetes: DEBUG
+
+# 需对外暴露actuator
+management:
+  endpoint:
+    health:
+      show-details: always
+      enabled: true
+    restart:
+      enabled: true
+    info:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+#  health:
+#    kubernetes:
+#      enabled: false
+#  info:
+#    kubernetes:
+#      enabled: false
+---
+spring:
+  application:
+    name: config-sample
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  config:
+    activate:
+      on-profile: local
+    # 从spring-cloud-kubernetes-configserver导入配置
+    import: optional:configserver:http://configserver.cloudnative.io
+  cloud:
+    config:
+      # 配置 spring-cloud-kubernetes-configserver 服务地址
+      uri: http://configserver.cloudnative.io
+      # 务必配置此处，否则默认为default
+      profile: local
+    kubernetes:
+      client:
+        namespace: default
+      enabled: true
+      discovery:
+        # 开启服务注册发现
+        enabled: true
+        # 是否允许访问所有namespaces，若配置了discovery-server-url，以discovery-server-url返回的数据为准
+        all-namespaces: false
+        include-not-ready-addresses: false
+        # 配合 spring-cloud-kubernetes-discoveryserver 使用
+        discovery-server-url: http://discoveryserver.cloudnative.io
+      config:
+        enabled: true
+        enable-api: true
+        name: ${spring.application.name}
+        namespace: default
+        sources:
+          - name: ${spring.application.name}
+      secrets:
+        enabled: true
+        enable-api: true
+        name: ${spring.application.name}
+        namespace: default
+        sources:
+          - name: ${spring.application.name}
+
+      # 新版本建议使用 configuration-watcher，以下参数可忽略
+      # reload:
+      #  enabled: true
+      #  monitoring-config-maps: true
+      #  monitoring-secrets: true
+      #  mode: event
+      #  strategy: refresh
+
+---
+spring:
+  application:
+    name: config-sample
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  config:
+    activate:
+      on-profile: kubernetes
+    import: optional:configserver:http://spring-cloud-kubernetes-configserver:8888
+  cloud:
+    config:
+      profile: kubernetes
+    kubernetes:
+      client:
+        namespace: default
+      enabled: true
+      discovery:
+        # 开启服务注册发现
+        enabled: true
+        # 允许访问所有namespaces，若配置了discovery-server-url，以discovery-server-url返回的数据为准
+        all-namespaces: false
+        include-not-ready-addresses: false
+        # 配合 spring-cloud-kubernetes-discoveryserver 使用
+        discovery-server-url: http://spring-cloud-kubernetes-discoveryserver
+      config:
+        enabled: true
+        enable-api: true
+        name: ${spring.application.name}
+        namespace: default
+        sources:
+          - name: ${spring.application.name}
+      secrets:
+        enabled: true
+        enable-api: true
+        name: ${spring.application.name}
+        namespace: default
+        sources:
+          - name: ${spring.application.name}
+
+      # 新版本建议使用 configuration-watcher，以下参数可忽略
+      # reload:
+      #  enabled: true
+      #  monitoring-config-maps: true
+      #  monitoring-secrets: true
+      #  mode: event
+      #  strategy: refresh

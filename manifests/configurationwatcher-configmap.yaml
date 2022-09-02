@@ -1,0 +1,26 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: spring-cloud-kubernetes-configuration-watcher
+data:
+  application.yaml: |-
+    spring:
+      cloud:
+        kubernetes:
+          configuration:
+            watcher:
+              refreshDelay: 10
+      rabbitmq:
+        username: rbaxter
+        password: password
+    logging:
+      level:
+        org:
+          springframework:
+            cloud:
+              kubernetes: TRACE
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: "*"
