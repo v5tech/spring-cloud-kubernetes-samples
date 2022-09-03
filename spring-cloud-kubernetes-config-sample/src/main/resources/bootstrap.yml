@@ -1,0 +1,76 @@
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.cloud.kubernetes: DEBUG
+
+# 需对外暴露actuator
+management:
+  endpoint:
+    health:
+      show-details: always
+      enabled: true
+    restart:
+      enabled: true
+    info:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+#  health:
+#    kubernetes:
+#      enabled: false
+#  info:
+#    kubernetes:
+#      enabled: false
+
+spring:
+  application:
+    name: spring-cloud-kubernetes-config-sample
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  config:
+    import: optional:configserver:http://192.168.101.74:31526
+  cloud:
+    kubernetes:
+      enabled: true
+      discovery:
+        # 开启服务注册发现
+        enabled: true
+        # 允许访问所有namespaces
+        all-namespaces: true
+        include-not-ready-addresses: false
+
+#      config:
+#        enabled: true
+#        enable-api: true
+#        name: ${spring.application.name}
+#        namespace: default
+#        sources:
+#          - name: ${spring.application.name}
+#      secrets:
+#        enabled: true
+#        enable-api: true
+#        name: ${spring.application.name}
+#        namespace: default
+#        sources:
+#          - name: ${spring.application.name}
+#       新版本建议使用 configuration-watcher，以下参数可忽略
+#      reload:
+#        enabled: true
+#        monitoring-config-maps: true
+#        monitoring-secrets: true
+#        mode: event
+#        strategy: refresh
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: kubernetes
+      on-cloud-platform: kubernetes
+    import: optional:configserver:http://spring-cloud-kubernetes-configserver:8888

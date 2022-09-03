@@ -1,0 +1,67 @@
+server:
+  port: 9080
+
+logging:
+  level:
+    org.springframework.cloud.kubernetes: DEBUG
+    org.springframework.cloud.openfeign: TRACE
+
+management:
+  endpoint:
+    health:
+      show-details: always
+      enabled: true
+    restart:
+      enabled: true
+    info:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+#  health:
+#    kubernetes:
+#      enabled: false
+#  info:
+#    kubernetes:
+#      enabled: false
+
+---
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: spring-cloud-kubernetes-discovery-sample
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+    kubernetes:
+      enabled: true
+      loadbalancer:
+        mode: SERVICE
+      discovery:
+        # 开启服务注册发现
+        enabled: true
+        # 允许访问所有namespaces
+        all-namespaces: true
+        include-not-ready-addresses: false
+        discovery-server-url: http://192.168.101.74:31527
+      config:
+        enabled: true
+        enable-api: true
+        name: ${spring.application.name}
+        namespace: default
+        sources:
+          - name: ${spring.application.name}
+      secrets:
+        enabled: true
+        enable-api: true
+        name: ${spring.application.name}
+        namespace: default
+        sources:
+          - name: ${spring.application.name}
