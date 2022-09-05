@@ -13,10 +13,9 @@ items:
         - name: http
           port: 80
           targetPort: 8761
-          nodePort: 31527
       selector:
         app: spring-cloud-kubernetes-discoveryserver
-      type: NodePort
+      type: ClusterIP
   - apiVersion: v1
     kind: ServiceAccount
     metadata:
@@ -59,6 +58,7 @@ items:
             app: spring-cloud-kubernetes-discoveryserver
         spec:
           serviceAccount: spring-cloud-kubernetes-discoveryserver
+          nodeName: node6
           containers:
             - name: spring-cloud-kubernetes-discoveryserver
               image: v5cn/spring-cloud-kubernetes-discoveryserver:2.1.3

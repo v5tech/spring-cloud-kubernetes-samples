@@ -1,45 +1,47 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spring-cloud-kubernetes-config-sample
+  name: spring-cloud-kubernetes-discovery-sample
   labels:
-    app: spring-cloud-kubernetes-config-sample
+    app: spring-cloud-kubernetes-discovery-sample
 spec:
   selector:
     matchLabels:
-      app: spring-cloud-kubernetes-config-sample
+      app: spring-cloud-kubernetes-discovery-sample
   replicas: 1
   template:
     metadata:
       labels:
-        app: spring-cloud-kubernetes-config-sample
+        app: spring-cloud-kubernetes-discovery-sample
     spec:
       # 固定在node1节点
       nodeName: node1
       # 配置sa，否则报错
       serviceAccountName: admin-user
       containers:
-        - name: spring-cloud-kubernetes-config-sample
-          image: v5cn/spring-cloud-kubernetes-config-sample:1.1.0
+        - name: spring-cloud-kubernetes-discovery-sample
+          image: v5cn/spring-cloud-kubernetes-discovery-sample:1.0.0
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8080
+            - containerPort: 9080
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "kubernetes"
+            - name: JAVA_OPTS
+              value: "-Dspring.profiles.active=kubernetes -server -Xms2048m -Xmx2048m -Xss512k"
             - name: TZ
               value: "Asia/Shanghai"
           volumeMounts:
             - name: localtime
               mountPath: /etc/localtime
             # 外部化spring boot配置文件，挂载ConfigMap中的配置文件，/app是制作镜像时应用的工作目录，config是spring boot约定的配置文件存放目录
-            # - name: spring-cloud-kubernetes-config-sample-volume
+            # - name: spring-cloud-kubernetes-discovery-sample-volume
             #  mountPath: /app/config
       volumes:
         # ConfigMap 挂载点
-        # - name: spring-cloud-kubernetes-config-sample-volume
+        # - name: spring-cloud-kubernetes-discovery-sample-volume
         #  configMap:
-        #    name: spring-cloud-kubernetes-config-sample
+        #    name: spring-cloud-kubernetes-discovery-sample
         - name: localtime
           hostPath:
             path: /usr/share/zoneinfo/Asia/Shanghai
@@ -48,15 +50,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: spring-cloud-kubernetes-config-sample
+  name: spring-cloud-kubernetes-discovery-sample
   annotations:
     # actuator 端口地址
-    boot.spring.io/actuator: http://:8080/actuator
+    boot.spring.io/actuator: http://:9080/actuator
 spec:
   selector:
-    app: spring-cloud-kubernetes-config-sample
+    app: spring-cloud-kubernetes-discovery-sample
   type: ClusterIP
   ports:
     - name: http
-      port: 8080
-      targetPort: 8080
+      port: 9080
+      targetPort: 9080

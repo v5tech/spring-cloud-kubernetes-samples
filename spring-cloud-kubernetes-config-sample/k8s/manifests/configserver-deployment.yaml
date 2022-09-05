@@ -27,10 +27,9 @@ items:
         - name: http
           port: 8888
           targetPort: 8888
-          nodePort: 31526
       selector:
         app: spring-cloud-kubernetes-configserver
-      type: NodePort
+      type: ClusterIP
   - apiVersion: v1
     kind: ServiceAccount
     metadata:

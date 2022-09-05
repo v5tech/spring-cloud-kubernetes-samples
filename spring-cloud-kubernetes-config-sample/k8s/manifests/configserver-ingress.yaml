@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: configserver-ingress
+  namespace: default
+spec:
+  rules:
+    - host: "configserver.anchnet.com"
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: spring-cloud-kubernetes-configserver
+                port:
+                  number: 8888

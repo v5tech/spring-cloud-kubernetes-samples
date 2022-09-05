@@ -6,8 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
-@FeignClient(value = "spring-cloud-kubernetes-config-sample",url = "http://192.168.101.74:31528")
-//@FeignClient(value = "spring-cloud-kubernetes-config-sample")
+@FeignClient(value = "spring-cloud-kubernetes-config-sample",url = "${feign.client.config-sample-url:http://spring-cloud-kubernetes-config-sample:8080}")
 public interface FeignService {
 
     @GetMapping("/info")
