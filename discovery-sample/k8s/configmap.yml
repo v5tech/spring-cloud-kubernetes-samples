@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: discovery-sample
+  labels:
+    # spring-cloud-kubernetes-configuration-watcher 监听 label
+    spring.cloud.kubernetes.config: "true"
+data:
+  application.yml: |-
+    spring:
+      config:
+        activate:
+          on-profile: local
+    feign:
+      client:
+        config-sample-url: http://configsample.cloudnative.io
+    ---
+    spring:
+      config:
+        activate:
+          on-profile: kubernetes
+    feign:
+      client:
+        config-sample-url: http://config-sample:8080

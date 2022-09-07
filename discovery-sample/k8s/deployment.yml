@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discovery-sample
+  labels:
+    app: discovery-sample
+spec:
+  selector:
+    matchLabels:
+      app: discovery-sample
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: discovery-sample
+    spec:
+      # 固定在node1节点
+      # nodeName: node1
+      # 配置sa，否则报错
+      serviceAccountName: admin-user
+      containers:
+        - name: discovery-sample
+          image: reg.anchnet.com/cloudnative/discovery-sample:1.0.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "kubernetes"
+            - name: JAVA_OPTS
+              value: "-Dspring.profiles.active=kubernetes -Xms2048m -Xmx2048m -Xss512k"
+            - name: TZ
+              value: "Asia/Shanghai"
+          volumeMounts:
+            - name: localtime
+              mountPath: /etc/localtime
+            # 外部化spring boot配置文件，挂载ConfigMap中的配置文件，/app是制作镜像时应用的工作目录，config是spring boot约定的配置文件存放目录
+            # - name: discovery-sample-volume
+            #  mountPath: /app/config
+      volumes:
+        # ConfigMap 挂载点
+        # - name: discovery-sample-volume
+        #  configMap:
+        #    name: discovery-sample
+        - name: localtime
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: discovery-sample
+  annotations:
+    # actuator 端口地址
+    boot.spring.io/actuator: http://:9080/actuator
+spec:
+  selector:
+    app: discovery-sample
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 9080
+      targetPort: 9080

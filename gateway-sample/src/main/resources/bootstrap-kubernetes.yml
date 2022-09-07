@@ -1,0 +1,45 @@
+spring:
+  config:
+    activate:
+      on-profile: kubernetes
+    import: optional:configserver:http://spring-cloud-kubernetes-configserver:8888
+  cloud:
+    loadbalancer:
+      enabled: true
+      ribbon:
+        enabled: false
+    gateway:
+      enabled: true
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+          url-expression: "'http://'+serviceId+':'+port"
+    kubernetes:
+      enabled: true
+      config:
+        name: gateway-sample
+        namespace: default
+        enabled: true
+        enable-api: true
+      secrets:
+        name: gateway-sample
+        namespace: default
+        enabled: true
+        enable-api: true
+      reload:
+        enabled: true
+        mode: event
+        strategy: refresh
+        monitoring-config-maps: true
+        monitoring-secrets: true
+      loadbalancer:
+        enabled: true
+        mode: SERVICE
+      discovery:
+        # 开启服务注册发现
+        enabled: true
+        # 允许访问所有namespaces
+        all-namespaces: true
+        include-not-ready-addresses: false
+        discovery-server-url: http://spring-cloud-kubernetes-discoveryserver

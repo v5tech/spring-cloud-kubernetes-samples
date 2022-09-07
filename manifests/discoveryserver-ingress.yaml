@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: discoveryserver-ingress
+  namespace: default
+spec:
+  rules:
+    - host: "discoveryserver.cloudnative.io"
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: spring-cloud-kubernetes-discoveryserver
+                port:
+                  number: 80

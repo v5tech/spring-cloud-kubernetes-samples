@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gateway-sample
+  labels:
+    # spring-cloud-kubernetes-configuration-watcher 监听 label
+    spring.cloud.kubernetes.config: "true"
+data:
+  application.yml: |-
+    spring:
+      config:
+        activate:
+          on-profile: local
+        import: optional:configserver:http://configserver.cloudnative.io
+      cloud:
+        kubernetes:
+          discovery:
+            discovery-server-url: http://discoveryserver.cloudnative.io
+    logging:
+      level:
+        org.springframework.cloud.kubernetes: DEBUG
+        org.springframework.cloud.gateway: INFO
+    
+    management:
+      endpoint:
+        health:
+          show-details: always
+          enabled: true
+        restart:
+          enabled: true
+        info:
+          enabled: true
+        gateway:
+          enabled: true
+      endpoints:
+        web:
+          exposure:
+            include: '*'
+    message: hello,local profile 111
+    ---
+    spring:
+      config:
+        activate:
+          on-profile: kubernetes
+        import: optional:configserver:http://spring-cloud-kubernetes-configserver:8888
+      cloud:
+        kubernetes:
+          discovery:
+            discovery-server-url: http://spring-cloud-kubernetes-discoveryserver
+    logging:
+      level:
+        org.springframework.cloud.kubernetes: DEBUG
+        org.springframework.cloud.gateway: INFO
+    
+    management:
+      endpoint:
+        health:
+          show-details: always
+          enabled: true
+        restart:
+          enabled: true
+        info:
+          enabled: true
+        gateway:
+          enabled: true
+      endpoints:
+        web:
+          exposure:
+            include: '*'
+    message: hello,kubernetes profile 222

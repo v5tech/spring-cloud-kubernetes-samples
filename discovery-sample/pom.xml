@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.7.3</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>com.cloudnative.sample</groupId>
+    <artifactId>discovery-sample</artifactId>
+    <version>1.0.0</version>
+    <name>discovery-sample</name>
+    <description>discovery-sample</description>
+    <properties>
+        <java.version>1.8</java.version>
+        <spring-cloud.version>2021.0.3</spring-cloud.version>
+        <docker.registry.organization>reg.anchnet.com/cloudnative</docker.registry.organization>
+    </properties>
+    <dependencies>
+        <!-- 依赖spring-cloud-kubernetes-discoveryserver组件，直接与其通信，不需要本地存在 ~/.kube/config文件 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-kubernetes-discoveryclient</artifactId>
+            <version>2.1.3</version>
+        </dependency>
+        <!-- 从configmap、secret加载应用配置文件 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-kubernetes-client-config</artifactId>
+            <version>2.1.3</version>
+        </dependency>
+        <!-- spring-cloud-config-clien 从config server加载配置文件 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-config-client</artifactId>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-kubernetes-client-loadbalancer</artifactId>
+            <version>2.1.3</version>
+        </dependency>
+        -->
+        <!-- loadbalancer组件，不建议使用spring-cloud-starter-kubernetes-client-loadbalancer组件，该组件仍然会使用本地~/.kube/config文件进行通信 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <layers>
+                        <enabled>true</enabled>
+                    </layers>
+                    <image>
+                        <name>${docker.registry.organization}/${project.artifactId}:${project.version}</name>
+                        <publish>true</publish>
+                        <pullPolicy>IF_NOT_PRESENT</pullPolicy>
+                    </image>
+                    <goal>build-image</goal>
+                    <docker>
+                        <host>tcp://172.16.62.15:2375</host>
+                        <tlsVerify>false</tlsVerify>
+                        <publishRegistry>
+                            <username>${env.DOCKER_USERNAME}</username>
+                            <password>${env.DOCKER_PASSWORD}</password>
+                        </publishRegistry>
+                    </docker>
+                    <pullPolicy>IF_NOT_PRESENT</pullPolicy>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

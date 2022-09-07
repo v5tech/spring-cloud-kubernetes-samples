@@ -1,0 +1,32 @@
+server:
+  port: 8070
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: gateway-sample
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+
+logging:
+  level:
+    org.springframework.cloud.kubernetes: DEBUG
+    org.springframework.cloud.gateway: INFO
+
+management:
+  endpoint:
+    health:
+      show-details: always
+      enabled: true
+    restart:
+      enabled: true
+    info:
+      enabled: true
+    gateway:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
