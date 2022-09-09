@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weibo-service
+  namespace: default
+  labels:
+    app: weibo-service
+spec:
+  selector:
+    matchLabels:
+      app: weibo-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: weibo-service
+    spec:
+      containers:
+        - name: weibo-service
+          image: reg.anchnet.com/cloudnative/weibo-service:latest
+          resources:
+            requests:
+              cpu: 2m
+              memory: 500Mi
+            limits:
+              cpu: 2m
+              memory: 500Mi
+          ports:
+            - containerPort: 5000
+              name: weibo-service
+          volumeMounts:
+            - name: localtime
+              mountPath: /etc/localtime
+      volumes:
+        - name: localtime
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: weibo-service
+  namespace: default
+spec:
+  selector:
+    app: weibo-service
+  type: ClusterIP
+  ports:
+    - name: http
+      protocol: TCP
+      port: 5000
+      targetPort: 5000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: weibo-service-ingress
+  namespace: default
+spec:
+  rules:
+    - host: weiboservice.cloudnative.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: weibo-service
+                port:
+                  number: 5000

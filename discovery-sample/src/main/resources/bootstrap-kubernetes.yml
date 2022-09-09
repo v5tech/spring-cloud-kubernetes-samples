@@ -40,3 +40,5 @@ spring:
 #feign:
 #  client:
 #    config-sample-url: http://config-sample:8080
+#    weibo-service-url: http://weibo-service:5000
+#    weather-service-url: http://weather-service:8080

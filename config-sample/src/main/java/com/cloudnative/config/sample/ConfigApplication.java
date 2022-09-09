@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -30,9 +29,11 @@ public class ConfigApplication {
     @Autowired
     private Environment environment;
 
-    @GetMapping("/info")
-    public String info() {
-        return String.format("%s:%s:%s", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), environment.getProperty("spring.profiles.active"), environment.getProperty("HOSTNAME"));
+    @GetMapping("/")
+    public Object index() {
+        Map<String, Object> map = new TreeMap<>();
+        discoveryClient.getServices().forEach(serviceId -> map.put(serviceId, discoveryClient.getInstances(serviceId)));
+        return map;
     }
 
     @GetMapping(value = {"/services", "/services/{serviceId}"})
@@ -54,6 +55,11 @@ public class ConfigApplication {
             serviceInstances.addAll(discoveryClient.getInstances(item));
         });
         return serviceInstances;
+    }
+
+    @GetMapping("/info")
+    public String info() {
+        return String.format("%s:%s:%s", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), environment.getProperty("spring.profiles.active"), environment.getProperty("HOSTNAME"));
     }
 
     public static void main(String[] args) {

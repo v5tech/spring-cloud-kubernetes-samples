@@ -36,12 +36,14 @@ spring:
     import: optional:configserver:http://configserver.cloudnative.io
   cloud:
     kubernetes:
+      client:
+        namespace: default
       enabled: true
       discovery:
         # 开启服务注册发现
         enabled: true
         # 允许访问所有namespaces
-        all-namespaces: true
+        all-namespaces: false
         include-not-ready-addresses: false
 
 ---

@@ -40,3 +40,5 @@ spring:
 #feign:
 #  client:
 #    config-sample-url: http://configsample.cloudnative.io
+#    weibo-service-url: http://weiboservice.cloudnative.io
+#    weather-service-url: http://weatherservice.cloudnative.io

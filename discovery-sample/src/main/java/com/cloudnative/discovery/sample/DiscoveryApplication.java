@@ -1,6 +1,8 @@
 package com.cloudnative.discovery.sample;
 
 import com.cloudnative.discovery.sample.feign.FeignService;
+import com.cloudnative.discovery.sample.feign.WeatherService;
+import com.cloudnative.discovery.sample.feign.WeiboService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -33,6 +35,12 @@ public class DiscoveryApplication {
     @Autowired
     private FeignService feignService;
 
+    @Autowired
+    private WeiboService weiboService;
+
+    @Autowired
+    private WeatherService weatherService;
+
     public static void main(String[] args) {
         SpringApplication.run(DiscoveryApplication.class, args);
     }
@@ -53,4 +61,13 @@ public class DiscoveryApplication {
         return restTemplate.getForObject(serviceUrl+"/info",String.class);
     }
 
+    @GetMapping("/news")
+    public Object news(){
+        return weiboService.news();
+    }
+
+    @GetMapping("/weatherInfo")
+    public Object weatherInfo(){
+        return weatherService.weatherInfo();
+    }
 }
