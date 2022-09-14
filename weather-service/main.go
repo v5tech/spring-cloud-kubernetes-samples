@@ -13,12 +13,12 @@ func GetWeather(ctx *gin.Context) {
 	client := resty.New()
 	resp, _ := client.R().Get("http://www.tianqiapi.com/api?version=v9&appid=23035354&appsecret=8YvlPNrz")
 	weather := model.WeatherInfo{}
-	json.Unmarshal(resp.Body(), &weather)
+	_ = json.Unmarshal(resp.Body(), &weather)
 	ctx.JSON(http.StatusOK, weather)
 }
 
 func main() {
 	router := gin.Default()
 	router.GET("/", GetWeather)
-	router.Run(":8080")
+	_ = router.Run(":8080")
 }

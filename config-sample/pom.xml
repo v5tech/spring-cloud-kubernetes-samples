@@ -15,7 +15,7 @@
     <description>config-sample</description>
     <properties>
         <java.version>1.8</java.version>
-        <spring-cloud.version>2021.0.3</spring-cloud.version>
+        <spring-cloud.version>2021.0.4</spring-cloud.version>
         <docker.registry.organization>reg.anchnet.com/cloudnative</docker.registry.organization>
     </properties>
     <dependencies>

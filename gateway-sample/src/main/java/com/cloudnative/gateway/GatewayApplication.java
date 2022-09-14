@@ -56,8 +56,8 @@ public class GatewayApplication {
                                 // 去前缀
                                 .stripPrefix(1)
                                 // 设置熔断
-                                .circuitBreaker(c -> c.setName("weibo-news").setFallbackUri("forward:/fallback")))
-                        .uri("lb://weibo-news"))
+                                .circuitBreaker(c -> c.setName("weibo-service").setFallbackUri("forward:/fallback")))
+                        .uri("lb://weibo-service"))
                 .route(p -> p.path("/weather/**")
                         .filters(f -> f
                                 // 去前缀
